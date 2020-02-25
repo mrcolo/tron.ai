@@ -22,13 +22,10 @@ if __name__ == "__main__":
             a = keyboard.read_key()
             if a == 'left':
                 h_a = 0
-                
             if a == 'up':
                 h_a = 1
-                
             if a == 'right':
                 h_a = 2
-                
             if a == 'down':
                 h_a = 3
             next_state, reward, done, _ = env.step(h_a)

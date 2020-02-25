@@ -11,18 +11,14 @@ import copy
 sys.setrecursionlimit(10000)
 COMP = +1
 
-# HARDCODED AI
-
 class TronGame ():
     def __init__(self, N):
         self.N = N
         self.board = None
         self.p_pos = []
         self.e_pos = []
-        self.counter = 0
-    
-    # CORE GAME STATE EVALS
 
+    # EVALS
     def is_done(self, pos):
         if self.board[pos[0]][pos[1]]:
             return True
@@ -82,10 +78,11 @@ class TronGame ():
                 if state[i][j] == 0:
                     cells.append([i, j])
         return cells
-  
+    
+    # """ AI """
     def minimax(self,start, state, depth, player):
         """
-        AI function that choice the best move
+        Choose best move
         :param state: current state of the board
         :param depth: node index in the tree (0 <= depth <= 9),
         but never nine in this case (see iaturn() function)
@@ -102,17 +99,12 @@ class TronGame ():
             best = [-1, -1, +infinity]
 
         empties =  self.available_cells(state, start)
-        #print("CURR_EMPTY: {}".format(empties))
         for cell in empties:
             x, y = cell[0], cell[1]
-            #self.print_a_board(state)
-            #x_n, y_n = choice(self.available_cells(state, [x,y]))
-            #print(start, x, y, self.available_cells(state, [x,y]), x_n, y_n)
             state[x][y] = 1
             me = [x, y]     
             score = self.minimax(me, state, depth - 1, -player)
             state[x][y] = 0
-            #state[x_n][y_n] = 0
             score[0], score[1] = x, y
 
             if player == COMP:
@@ -122,13 +114,29 @@ class TronGame ():
                 if score[2] < best[2]:
                     best = score
         return best
-
+    def bot_turn(self):
+        """
+        It calls the minimax function if the depth < 9,
+        else it choices a random coordinate.
+        :return:
+        """
+        x, y = None, None
+        board = copy.deepcopy(self.board)
+        move = self.minimax(self.e_pos, board, 11, COMP)
+        x, y = move[0], move[1]
+        if [x,y] != [-1,-1]:
+            return self.coor_to_action(x, y)
+        else:
+            moves = self.possible_moves(self.e_pos)
+            move = choice(moves)
+            return self.coor_to_action(move[0], move[1])
+    
+    # GAME LOGIC
     def move(self, action, curr_pos):
         # left
         if action == 0:
             curr_pos[1] = (curr_pos[1] - 1) if (curr_pos[1] - 1) >= 0 else curr_pos[1]
             done = self.is_done(curr_pos)
-            #print(done)
             if not done:
                 self.board[curr_pos[0]][curr_pos[1]] = 1
             else:
@@ -161,24 +169,6 @@ class TronGame ():
                 return self.board, curr_pos, -1, True
             
         return self.board, curr_pos, 0, False
-    def bot_turn(self):
-        """
-        It calls the minimax function if the depth < 9,
-        else it choices a random coordinate.
-        :return:
-        """
-
-        x, y = None, None
-        board = copy.deepcopy(self.board)
-        move = self.minimax(self.e_pos, board, 5, COMP)
-        #print("move: {}".format(move))
-        x, y = move[0], move[1]
-        if [x,y] != [-1,-1]:
-            return self.coor_to_action(x, y)
-        else:
-            moves = self.possible_moves(self.e_pos)
-            move = choice(moves)
-            return self.coor_to_action(move[0], move[1])
     def start_game(self):
         """
         Simulates the board at the start of the game
@@ -192,7 +182,6 @@ class TronGame ():
 
         self.p_pos = [random.randrange(1, self.N - 2), random.randrange(1, self.N - 2)]
         self.e_pos = [random.randrange(1, self.N - 2), random.randrange(1,self.N - 2)]
-        #self.e_pos = [2,2]
         while self.p_pos[0] == self.e_pos[0] and  self.p_pos[1] == self.e_pos[1]: 
             self.e_pos = [random.randrange(1, self.N - 2), random.randrange(1, self.N - 2)]
 
@@ -203,7 +192,7 @@ class TronGame ():
     
     # UTILS
     def print_board(self):
-        print("------------------")
+        print("")
         start = 0
         end = self.N
         for i in range(0,self.N):
@@ -220,7 +209,7 @@ class TronGame ():
             start += self.N
             end += self.N
     def print_a_board(self, board):
-        print("------------------")
+        print("")
         start = 0
         end = self.N
         for i in range(0,self.N):
@@ -239,7 +228,6 @@ class TronGame ():
             moves.append([pos[0], pos[1] - 1])
         if (pos[0] - 1) >= 0:
             moves.append([pos[0] - 1, pos[1]])
-        
         if (pos[1] + 1) <= self.N:
             moves.append([pos[0], pos[1] + 1])
         if (pos[0] + 1) <= self.N:
