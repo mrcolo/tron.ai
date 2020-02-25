@@ -18,7 +18,7 @@ class TronEnv(gym.Env):
         self.p_pos = None
         self.e_pos = None
         self.game = TronGame(20)
-        self.teacher = PPO2.load("tron_20x20_1000000")
+        #self.teacher = PPO2.load("tron_20x20_1000000")
         self.temp_state = None
 
     def step(self, action):
@@ -27,7 +27,6 @@ class TronEnv(gym.Env):
         e_action = self.game.bot_turn()
         _, p_pos, reward, p_done = self.game.move(action, self.p_pos)
         curr_board, e_pos, _, e_done = self.game.move(e_action, self.e_pos)
-        #print(e_pos)
         reward = 0
         if p_done:
             reward -= 1

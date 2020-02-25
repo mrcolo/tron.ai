@@ -9,7 +9,7 @@ if __name__ == "__main__":
     
     done = False
     ratio = []
-    for i in range(0, 10):
+    for i in range(0, 1):
         state = env.reset()
         env.render()
         while not done:
@@ -17,6 +17,4 @@ if __name__ == "__main__":
             env.render()
             state = next_state
         print(reward)
-        ratio.append(reward)
-    print(ratio)
    # print(np.array(ratio).mean())

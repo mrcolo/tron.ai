@@ -109,24 +109,18 @@ class TronGame ():
             #x_n, y_n = choice(self.available_cells(state, [x,y]))
             #print(start, x, y, self.available_cells(state, [x,y]), x_n, y_n)
             state[x][y] = 1
-            #print("ITS DEBUG TIME")
-            #self.print_a_board(state)
-
-            # FIXME e_pos is never updated so this should be a new start
-            #me = self.e_pos if player > 0 else self.p_pos       
             me = [x, y]     
             score = self.minimax(me, state, depth - 1, -player)
-            
             state[x][y] = 0
             #state[x_n][y_n] = 0
             score[0], score[1] = x, y
 
             if player == COMP:
                 if score[2] > best[2]:
-                    best = score  # max value
+                    best = score 
             else:
                 if score[2] < best[2]:
-                    best = score  # min value
+                    best = score
         return best
 
     def move(self, action, curr_pos):
@@ -176,7 +170,7 @@ class TronGame ():
 
         x, y = None, None
         board = copy.deepcopy(self.board)
-        move = self.minimax(self.e_pos, board, 12, COMP)
+        move = self.minimax(self.e_pos, board, 8, COMP)
         #print("move: {}".format(move))
         x, y = move[0], move[1]
         if [x,y] != [-1,-1]:
@@ -253,5 +247,4 @@ class TronGame ():
         return moves
     def coor_to_action(self, x, y):
         moves = self.possible_moves(self.e_pos)
-        print(moves, moves.index([x, y]))
         return moves.index([x, y])
