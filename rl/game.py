@@ -170,7 +170,7 @@ class TronGame ():
 
         x, y = None, None
         board = copy.deepcopy(self.board)
-        move = self.minimax(self.e_pos, board, 8, COMP)
+        move = self.minimax(self.e_pos, board, 5, COMP)
         #print("move: {}".format(move))
         x, y = move[0], move[1]
         if [x,y] != [-1,-1]:
