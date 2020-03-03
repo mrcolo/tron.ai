@@ -5,7 +5,7 @@ import random
 import numpy as np
 from stable_baselines import PPO2
 from game import TronGame
-dic = {0: "left", 1: "down", 2: "right", 3: "up" }
+dic = {0: "left", 1: "up", 2: "right", 3: "down" }
 
 N = 20
 BOARD = np.zeros((N, N), dtype=int)
@@ -17,13 +17,18 @@ class TronEnv(gym.Env):
         self.curr_board = None
         self.p_pos = None
         self.e_pos = None
-        self.game = TronGame(20)
+        self.game = TronGame(20, 2)
         #self.teacher = PPO2.load("tron_20x20_1000000")
         self.temp_state = None
+        self.prev_action = None
 
     def step(self, action):
         assert self.action_space.contains(action)
-        #e_action, _ = self.teacher.predict(self.temp_state)
+
+        if (action + 2 == self.prev_action) or (action - 2 == self.prev_action):
+            action = self.prev_action
+
+
         e_action = self.game.bot_turn()
         _, p_pos, reward, p_done = self.game.move(action, self.p_pos)
         curr_board, e_pos, _, e_done = self.game.move(e_action, self.e_pos)
@@ -40,6 +45,7 @@ class TronEnv(gym.Env):
         e_pos = np.array([e_pos]).flatten()
         state = np.concatenate((curr_board,p_pos, e_pos), axis=0).tolist()
         self.temp_state = state
+        self.prev_action = action
 
         return state, reward, p_done or e_done, {}
 

@@ -12,11 +12,12 @@ sys.setrecursionlimit(10000)
 COMP = +1
 
 class TronGame ():
-    def __init__(self, N):
+    def __init__(self, N, depth):
         self.N = N
         self.board = None
         self.p_pos = []
         self.e_pos = []
+        self.depth = depth
 
     # EVALS
     def is_done(self, pos):
@@ -122,7 +123,7 @@ class TronGame ():
         """
         x, y = None, None
         board = copy.deepcopy(self.board)
-        move = self.minimax(self.e_pos, board, 11, COMP)
+        move = self.minimax(self.e_pos, board, self.depth, COMP)
         x, y = move[0], move[1]
         if [x,y] != [-1,-1]:
             return self.coor_to_action(x, y)
