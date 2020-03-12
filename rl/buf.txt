@@ -1,0 +1,52 @@
+1. git ls-files | xargs | du -ch
+    how much for git
+    what files consume the most repo space
+
+2. I run 
+    git branch | wc -l
+    which returns 176, so there are 176 local branches. 
+    To find remote branches, I run
+    git branch -r | wc -l
+    which tells me that there are 177 remote branches. 
+
+3. I run
+    git remote -v
+    which returns:
+    origin  https://git.savannah.gnu.org/git/emacs.git (fetch)
+    origin  https://git.savannah.gnu.org/git/emacs.git (push)
+    So we have a remote repo at git.savannah.gnu.org/git/emacs.git, which is the reference
+    to where we push commits to. 
+
+4. To find the most recent branches, I run
+    git for-each-ref --count=10 --sort=-committerdate refs/heads
+
+    which returned: 
+    19aecd340b7b3ab54629b790ba70a90130bad63d commit refs/heads/master
+    d2873706749ef68803e79bab6109a534f4c9d23a commit refs/heads/scratch/joaot/make-completion-at-point-function
+    dd3fa9411a28175f9a1a984a69cfa7162023c5df commit refs/heads/feature/windows-with-utils
+    8f22251e595d7598d6643b0d24bf5f409dc59fa8 commit refs/heads/scratch/completion-api
+    8a4de19dfb52551a65c360a9346ede137d0fc6e8 commit refs/heads/scratch/a-modest-completion-redesign-proposal
+    2b0f589134d9427a96ab8cf0d8473715740984ef commit refs/heads/scratch/fido-mode
+    924a4201d24c10c48db920815ebf98dfaadc1e85 commit refs/heads/feature/gnus-select2
+    7a10082093791f0e035e4f9f95a774a7be1cd586 commit refs/heads/feature/extend_face_id
+    079461b360a2467ff4ab2ec57516c6f9e45f50fe commit refs/heads/scratch/jit-lock-antiblink-cleaned-up
+    55dcd32ad2209dc34bfb6b713bf73be9bf4c4cb2 commit refs/heads/emacs-26
+
+    from most recent, to oldest one. 
+    I used refs/heads as that contains the pointers to local branches (heads)
+    and for-each-ref, which I found on git's manual, which shows info for each reference in heads. 
+    I then sorted it reversed (most recent first) using the --sort=-committerdate option. 
+
+5.  To count the number of commits in master, I used:
+    git rev-list master | wc -l
+    where the last string corresponds to the branch we want to count the commits for. 
+    I get 139583 commits. 
+
+6.  By using man git rev-list, I find that I can list all commits by running:
+    git rev-list --all | wc -l
+    Which gives me 143910.
+    Therefore the percentage is 139583 / 143910 = 0.9699 ~ 0.97%
+7.  After discovering that the command git shortlog gives a number of the commits of each author,
+    
+8.
+9.

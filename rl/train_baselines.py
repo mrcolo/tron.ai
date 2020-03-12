@@ -47,7 +47,6 @@ def optimize_params(trial, n_prune_evals_per_trial: int = 2, n_tests_per_eval: i
         if trial.should_prune(eval_idx):
             raise optuna.structs.TrialPruned()
     return -1 * last_reward
-
 def get_model_params():
     params = optuna_study.best_trial.params
     print('Loaded best parameters as: {}'.format(params))
@@ -61,7 +60,6 @@ def get_model_params():
         'noptepochs': int(params['noptepochs']),
         'lam': params['lam'],
     } 
-
 def run_optimization(n_trials: int = 10):
     try:
       optuna_study.optimize(optimize_params, n_trials=n_trials, n_jobs=1)
@@ -82,8 +80,8 @@ if __name__ == "__main__":
               'n_steps': 1000, 
               'noptepochs': 2}
     model = PPO2(MlpPolicy, env, verbose=1, tensorboard_log="./logs/", **params)
-    model.learn(total_timesteps=20000000)
+    model.learn(total_timesteps=5000000)
     #df = run_optimization()
     #print(df)
-    model.save("tron_student_{}x{}_{}".format(20,20,20000000))
+    model.save("tron_student_{}x{}_{}".format(40,40,50000000))
 

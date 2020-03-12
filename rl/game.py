@@ -125,12 +125,16 @@ class TronGame ():
         board = copy.deepcopy(self.board)
         move = self.minimax(self.e_pos, board, self.depth, COMP)
         x, y = move[0], move[1]
-        if [x,y] != [-1,-1]:
+        randy = random.randrange(0,100)
+        if [x,y] != [-1,-1] and randy % 5 != 0:
             return self.coor_to_action(x, y)
         else:
-            moves = self.possible_moves(self.e_pos)
-            move = choice(moves)
-            return self.coor_to_action(move[0], move[1])
+            moves = self.available_cells(self.board, self.e_pos)
+            if len(moves) != 0:
+                move = choice(moves)
+                return self.coor_to_action(move[0], move[1])
+            else:
+                return 1
     
     # GAME LOGIC
     def move(self, action, curr_pos):
@@ -175,16 +179,16 @@ class TronGame ():
         Simulates the board at the start of the game
         """
         self.board = np.zeros((self.N, self.N), dtype=int)
-        for i in range(self.N):
-            self.board[0] = [1] * self.N
-            self.board[self.N - 1] = [1] * self.N
-            self.board[i][0] = 1
-            self.board[i][self.N - 1] = 1
+        # for i in range(self.N):
+        #     self.board[0] = [1] * self.N
+        #     self.board[self.N - 1] = [1] * self.N
+        #     self.board[i][0] = 1
+        #     self.board[i][self.N - 1] = 1
 
-        self.p_pos = [random.randrange(1, self.N - 2), random.randrange(1, self.N - 2)]
-        self.e_pos = [random.randrange(1, self.N - 2), random.randrange(1,self.N - 2)]
-        while self.p_pos[0] == self.e_pos[0] and  self.p_pos[1] == self.e_pos[1]: 
-            self.e_pos = [random.randrange(1, self.N - 2), random.randrange(1, self.N - 2)]
+        self.p_pos = [self.N - self.N // 4, self.N // 2]
+        self.e_pos = [self.N // 4, self.N // 2]
+        # while self.p_pos[0] == self.e_pos[0] and  self.p_pos[1] == self.e_pos[1]: 
+        #     self.e_pos = [random.randrange(1, self.N - 2), random.randrange(1, self.N - 2)]
 
         self.board[self.p_pos[0]][self.p_pos[1]] = 1
         self.board[self.e_pos[0]][self.e_pos[1]] = 1
@@ -193,6 +197,8 @@ class TronGame ():
     
     # UTILS
     def print_board(self):
+        all_e = []
+        all_p = []
         print("")
         start = 0
         end = self.N
@@ -203,7 +209,16 @@ class TronGame ():
                 print("{} ".format(i), end=" ")
             for j in range(0, self.N):
                 if self.board[i][j] == 1:
-                    print("x", end =" ")
+                    if [i,j] == self.e_pos or [i,j] in all_e:
+                        print("\033[1;37;41mx\033[0m", end=" ")
+                        if [i, j] not in all_e:
+                            all_e.append(self.e_pos)
+                    elif [i,j] == self.p_pos or [i,j] in all_p:
+                        print("\033[0;37;42mx\033[0m", end=" ")
+                        if [i, j] not in all_p:
+                            all_p.append(self.p_pos)
+                    else:
+                        print("x", end=" ")
                 elif self.board[i][j] == 0:
                     print(" ", end =" ")
             print("")
